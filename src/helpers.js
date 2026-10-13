@@ -13,10 +13,21 @@ const MONTHS_FR = [
 ];
 
 /**
+ * Normalise une date (string ISO ou objet Date) en "YYYY-MM-DD".
+ * @param {string|Date} v
+ */
+function toIsoDate(v) {
+  if (!v) return '';
+  if (v instanceof Date) return isNaN(v) ? '' : v.toISOString().slice(0, 10);
+  return String(v).slice(0, 10);
+}
+
+/**
  * Formate une date ISO (YYYY-MM-DD) en "Lundi 12 mai 2025".
- * @param {string} dateStr
+ * @param {string|Date} dateStr
  */
 function formatDateFr(dateStr) {
+  dateStr = toIsoDate(dateStr);
   if (!dateStr) return '';
   const d = new Date(dateStr + 'T12:00:00Z');
   const dayIndex = (d.getUTCDay() === 0 ? 7 : d.getUTCDay()); // 1=Lun..7=Dim
@@ -30,6 +41,7 @@ function formatDateFr(dateStr) {
  * @param {string} dateStr  YYYY-MM-DD
  */
 function isValidationOpen(dateStr) {
+  dateStr = toIsoDate(dateStr);
   if (!dateStr) return false;
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);
@@ -42,6 +54,7 @@ function isValidationOpen(dateStr) {
  * @param {string} dateStr  YYYY-MM-DD
  */
 function daysUntil(dateStr) {
+  dateStr = toIsoDate(dateStr);
   if (!dateStr) return null;
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);
