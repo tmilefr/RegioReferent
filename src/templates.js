@@ -39,20 +39,28 @@ function layout(title, content, options = {}) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${esc(title)} – ABCM Travaux</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
   <header class="app-header">
-    <div class="header-inner">
-      <div class="logo">
-        <span class="logo-icon">🏗️</span>
-        <div>
-          <span class="logo-title">ABCM Travaux</span>
-          <span class="logo-sub">Validation des présences</span>
-        </div>
+    <div class="topbar">
+      <div class="header-inner">
+        <span class="topbar-title">ABCM Travaux</span>
+        ${nav}
       </div>
-      ${nav}
+    </div>
+    <div class="gradient-band"></div>
+    <div class="brandbar">
+      <div class="header-inner">
+        <a href="/" class="logo">
+          <img src="/regio.png" alt="ABCM Zweisprachigkeit" class="logo-img">
+          <div>
+            <span class="logo-title">Validation des présences</span>
+            <span class="logo-sub">Espace référent</span>
+          </div>
+        </a>
+      </div>
     </div>
   </header>
 
