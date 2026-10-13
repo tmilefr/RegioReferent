@@ -374,3 +374,11 @@ h1, h2, h3, h4, .page-title, .logo-title, .session-title, .btn, .badge,
 .session-card--open { border-left: 4px solid var(--green); }
 .inscrit-table thead { background: var(--dark); }
 .app-footer { background: var(--dark-2); color: var(--white); }
+
+/* ── Ajout d'une famille ─────────────────────────────────────────────────── */
+.add-family { background: var(--white); box-shadow: var(--shadow); border-radius: var(--radius);
+              padding: 1.25rem 1.5rem; margin-top: 1.5rem; }
+.add-family h2 { font-size: 1.1rem; margin-bottom: 1rem; color: var(--dark); }
+.add-family-form { display: grid; grid-template-columns: 2fr 1fr auto; gap: 1rem; align-items: end; }
+.add-family-form .form-group { margin-bottom: 0; }
+@media (max-width: 640px) { .add-family-form { grid-template-columns: 1fr; } }
