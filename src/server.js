@@ -350,7 +350,7 @@ async function processValidation(req, idWork, idFamRef, work) {
 async function processRemove(req, idWork) {
   const idInfo = parseInt(req.body.id_info, 10);
   if (idInfo) {
-    await models.deleteRegistration(idInfo);
+    await models.deleteRegistrationForWork(idInfo, idWork);
   }
 }
 

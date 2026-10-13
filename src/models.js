@@ -139,6 +139,16 @@ async function updatePresence(idInfo, present, nbUnites, commentaire, idFamRef) 
 }
 
 /**
+ * Supprime une inscription uniquement si elle appartient à la session.
+ *
+ * @param {number} idInfo
+ * @param {number} idWork
+ */
+async function deleteRegistrationForWork(idInfo, idWork) {
+  await query(`DELETE FROM infos WHERE id = ? AND id_travaux = ?`, [idInfo, idWork]);
+}
+
+/**
  * Familles pouvant être ajoutées à une session (pas encore inscrites,
  * école compatible avec accespar). Miroir de Familys_model::GetAvailableForWork()
  *
@@ -314,6 +324,7 @@ module.exports = {
   countRegistrations,
   updatePresence,
   deleteRegistration,
+  deleteRegistrationForWork,
   getAvailableFamilies,
   registerFamily,
   saveGlobalComment,

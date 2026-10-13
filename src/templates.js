@@ -289,16 +289,14 @@ function sessionPage(work, registrations, isOpen, options = {}) {
           </td>
           <td class="col-units">${defaultUnits} u.</td>
           <td class="col-actions">
-            <form method="POST" action="${formAction}" style="display:inline">
-              <input type="hidden" name="action" value="remove">
-              <input type="hidden" name="id_info" value="${r.id}">
-              <button type="button"
-                      class="btn btn-danger btn-xs btn-remove"
-                      data-confirm="Retirer cette famille de la session ?"
-                      data-form="remove-${r.id}">
-                Retirer
-              </button>
-            </form>
+            <button type="submit"
+                    form="remove-form"
+                    name="id_info"
+                    value="${r.id}"
+                    class="btn btn-danger btn-xs btn-remove"
+                    data-confirm="Retirer cette famille de la session ?">
+              Retirer
+            </button>
           </td>
         </tr>`;
     }
@@ -424,6 +422,9 @@ function sessionPage(work, registrations, isOpen, options = {}) {
       ${globalCommentField}
       ${validateBtn}
     </form>
+    ${isOpen ? '' : `<form method="POST" action="${formAction}" id="remove-form">
+      <input type="hidden" name="action" value="remove">
+    </form>`}
     ${addForm}`;
 
   return layout(work.titre, content, {
