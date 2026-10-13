@@ -20,6 +20,7 @@ function getPool() {
       connectionLimit    : 10,
       queueLimit         : 0,
       timezone           : '+00:00',
+      dateStrings        : ['DATE'], // DATE -> 'YYYY-MM-DD' (attendu par helpers.js)
       charset            : 'utf8mb4',
     });
   }
