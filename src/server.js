@@ -179,8 +179,10 @@ app.get('/session/:id', requireAuth, async (req, res) => {
 
     const registrations = await models.getRegistrations(idWork);
     const isOpen        = helpers.isValidationOpen(work.date_travaux);
+    const families      = isOpen ? [] : await models.getAvailableFamilies(work);
 
     const html = templates.sessionPage(work, registrations, isOpen, {
+      families,
       userName : req.session.userName,
       flashMsg : flash ? flash.msg  : '',
       flashType: flash ? flash.type : 'success',
@@ -214,6 +216,9 @@ app.post('/session/:id', requireAuth, async (req, res) => {
     } else if (action === 'remove' && !isOpen) {
       await processRemove(req, idWork);
       setFlash(req, 'Famille retirée de la session.', 'success');
+    } else if (action === 'add' && !isOpen) {
+      const r = await models.registerFamily(work, parseInt(req.body.id_famille, 10), req.body.type_participant);
+      setFlash(req, r.msg, r.ok ? 'success' : 'error');
     }
 
     return res.redirect(`/session/${idWork}`);
@@ -241,10 +246,12 @@ app.get('/token/:token', async (req, res) => {
 
     const registrations = await models.getRegistrations(tk.id_travaux);
     const isOpen        = helpers.isValidationOpen(work.date_travaux);
+    const families      = isOpen ? [] : await models.getAvailableFamilies(work);
 
     const html = templates.sessionPage(work, registrations, isOpen, {
       viaToken : true,
       token    : tokenStr,
+      families,
     });
 
     res.send(html);
@@ -284,6 +291,15 @@ app.post('/token/:token', async (req, res) => {
 
     if (action === 'remove' && !isOpen) {
       await processRemove(req, tk.id_travaux);
+    } else if (action === 'add' && !isOpen) {
+      const r = await models.registerFamily(work, parseInt(req.body.id_famille, 10), req.body.type_participant);
+      if (!r.ok) {
+        const registrations = await models.getRegistrations(tk.id_travaux);
+        return res.send(templates.sessionPage(work, registrations, isOpen, {
+          viaToken: true, token: tokenStr, flashMsg: r.msg, flashType: 'error',
+          families: await models.getAvailableFamilies(work),
+        }));
+      }
     }
 
     return res.redirect(`/token/${tokenStr}`);
@@ -334,7 +350,7 @@ async function processValidation(req, idWork, idFamRef, work) {
 async function processRemove(req, idWork) {
   const idInfo = parseInt(req.body.id_info, 10);
   if (idInfo) {
-    await models.deleteRegistration(idInfo);
+    await models.deleteRegistrationForWork(idInfo, idWork);
   }
 }
 

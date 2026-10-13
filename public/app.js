@@ -88,11 +88,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Boutons "Retirer" avec confirmation ───────────────────────────────────
   document.querySelectorAll('.btn-remove').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
       const msg = btn.dataset.confirm || 'Confirmer cette action ?';
-      if (window.confirm(msg)) {
-        btn.closest('form').submit();
-      }
+      if (!window.confirm(msg)) e.preventDefault();
     });
   });
 

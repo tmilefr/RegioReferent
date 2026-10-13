@@ -139,6 +139,69 @@ async function updatePresence(idInfo, present, nbUnites, commentaire, idFamRef) 
 }
 
 /**
+ * Supprime une inscription uniquement si elle appartient à la session.
+ *
+ * @param {number} idInfo
+ * @param {number} idWork
+ */
+async function deleteRegistrationForWork(idInfo, idWork) {
+  await query(`DELETE FROM infos WHERE id = ? AND id_travaux = ?`, [idInfo, idWork]);
+}
+
+/**
+ * Familles pouvant être ajoutées à une session (pas encore inscrites,
+ * école compatible avec accespar). Miroir de Familys_model::GetAvailableForWork()
+ *
+ * @param {object} work
+ */
+async function getAvailableFamilies(work) {
+  const params = [work.id];
+  let sql = `SELECT f.id, f.nom FROM famille f
+             WHERE f.id NOT IN (SELECT id_famille FROM infos WHERE id_travaux = ?)`;
+  if (work.accespar && work.accespar !== 'B') {
+    sql += ` AND (f.ecole = ? OR f.ecole = 'B')`;
+    params.push(work.accespar);
+  }
+  const [rows] = await query(sql + ' ORDER BY f.nom ASC', params);
+  return rows;
+}
+
+/**
+ * Inscrit une famille à une session (mode gestion référent).
+ * Miroir de Inscriptions::registerByRef().
+ * @returns {Promise<{ok:boolean, msg:string}>}
+ */
+async function registerFamily(work, idFam, typeParticipant) {
+  if (!['Mr', 'Mme', 'Both'].includes(typeParticipant)) {
+    return { ok: false, msg: 'Type de participant invalide.' };
+  }
+  const [fam] = await query(`SELECT id FROM famille WHERE id = ? LIMIT 1`, [idFam]);
+  if (!fam[0]) return { ok: false, msg: 'Famille introuvable.' };
+
+  const [dup] = await query(
+    `SELECT id FROM infos WHERE id_travaux = ? AND id_famille = ? LIMIT 1`, [work.id, idFam]);
+  if (dup[0]) return { ok: false, msg: 'Cette famille est déjà inscrite.' };
+
+  const nb = typeParticipant === 'Both' ? 2 : 1;
+  const [cnt] = await query(
+    `SELECT COALESCE(SUM(nb_participants), 0) AS nb FROM infos WHERE id_travaux = ?`, [work.id]);
+  if (Number(cnt[0].nb) + nb > parseInt(work.nb_inscrits_max, 10)) {
+    return { ok: false, msg: 'Plus de place disponible sur cette session.' };
+  }
+
+  await query(
+    `INSERT INTO infos
+       (id_famille, id_travaux, type_participant, nb_participants,
+        heure_debut_prevue, heure_fin_prevue,
+        nb_unites_valides, nb_unites_valides_effectif, type_session, created, updated)
+     VALUES (?, ?, ?, ?, ?, ?, ?, 0, 1, NOW(), NOW())`,
+    [idFam, work.id, typeParticipant, nb,
+     work.heure_deb_trav, work.heure_fin_trav, parseFloat(work.nb_units) || 0]
+  );
+  return { ok: true, msg: 'Famille ajoutée à la session.' };
+}
+
+/**
  * Supprime une inscription (no-show).
  *
  * @param {number} idInfo
@@ -261,6 +324,9 @@ module.exports = {
   countRegistrations,
   updatePresence,
   deleteRegistration,
+  deleteRegistrationForWork,
+  getAvailableFamilies,
+  registerFamily,
   saveGlobalComment,
   // tokens
   findValidToken,

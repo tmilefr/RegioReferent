@@ -202,7 +202,7 @@ function mySessionsPage(works, userName) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function sessionPage(work, registrations, isOpen, options = {}) {
-  const { userName = '', flashMsg = '', flashType = 'success', viaToken = false, token = null } = options;
+  const { userName = '', flashMsg = '', flashType = 'success', viaToken = false, token = null, families = [] } = options;
 
   const formAction = viaToken ? `/token/${token}` : `/session/${work.id}`;
   const days = daysUntil(work.date_travaux);
@@ -289,16 +289,14 @@ function sessionPage(work, registrations, isOpen, options = {}) {
           </td>
           <td class="col-units">${defaultUnits} u.</td>
           <td class="col-actions">
-            <form method="POST" action="${formAction}" style="display:inline">
-              <input type="hidden" name="action" value="remove">
-              <input type="hidden" name="id_info" value="${r.id}">
-              <button type="button"
-                      class="btn btn-danger btn-xs btn-remove"
-                      data-confirm="Retirer cette famille de la session ?"
-                      data-form="remove-${r.id}">
-                Retirer
-              </button>
-            </form>
+            <button type="submit"
+                    form="remove-form"
+                    name="id_info"
+                    value="${r.id}"
+                    class="btn btn-danger btn-xs btn-remove"
+                    data-confirm="Retirer cette famille de la session ?">
+              Retirer
+            </button>
           </td>
         </tr>`;
     }
@@ -373,6 +371,34 @@ function sessionPage(work, registrations, isOpen, options = {}) {
     ? `<div class="flash ${flashType}">${flashMsg}</div>`
     : '';
 
+  // ── Ajout d'une famille (avant la session uniquement) ──
+  // Formulaire séparé : ne doit pas être imbriqué dans #validation-form.
+  const addForm = !isOpen
+    ? `<section class="add-family">
+         <h2>Ajouter une famille</h2>
+         ${families.length ? `
+         <form method="POST" action="${formAction}" class="add-family-form">
+           <input type="hidden" name="action" value="add">
+           <div class="form-group">
+             <label for="id_famille">Famille</label>
+             <select name="id_famille" id="id_famille" class="form-control" required>
+               <option value="">— Choisir une famille —</option>
+               ${families.map(f => `<option value="${f.id}">${esc(f.nom)}</option>`).join('')}
+             </select>
+           </div>
+           <div class="form-group">
+             <label for="type_participant">Participant(s)</label>
+             <select name="type_participant" id="type_participant" class="form-control" required>
+               <option value="Mr">Monsieur</option>
+               <option value="Mme">Madame</option>
+               <option value="Both">Les deux</option>
+             </select>
+           </div>
+           <button type="submit" class="btn btn-primary">+ Ajouter</button>
+         </form>` : '<p class="page-sub">Aucune famille disponible à ajouter.</p>'}
+       </section>`
+    : '';
+
   const content = `
     <div class="page-header">
       <h1 class="page-title">${esc(work.titre)}</h1>
@@ -395,7 +421,11 @@ function sessionPage(work, registrations, isOpen, options = {}) {
 
       ${globalCommentField}
       ${validateBtn}
-    </form>`;
+    </form>
+    ${isOpen ? '' : `<form method="POST" action="${formAction}" id="remove-form">
+      <input type="hidden" name="action" value="remove">
+    </form>`}
+    ${addForm}`;
 
   return layout(work.titre, content, {
     userName,
