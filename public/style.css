@@ -4,29 +4,33 @@
 
 /* ── Variables ──────────────────────────────────────────────────────────── */
 :root {
-  --green:    #2ecc71;
-  --green-dk: #27ae60;
-  --blue:     #3498db;
-  --blue-dk:  #2980b9;
-  --red:      #e74c3c;
-  --red-dk:   #c0392b;
-  --orange:   #f39c12;
-  --grey-lt:  #f4f6f9;
-  --grey:     #dde2ea;
-  --grey-dk:  #b0bac5;
-  --text:     #2c3e50;
-  --text-sub: #7f8c8d;
+  --green:    #6fc191;
+  --green-dk: #6ab78a;
+  --blue:     #74cee4;
+  --blue-dk:  #6fc4d9;
+  --red:      #e16c6c;
+  --red-dk:   #c86969;
+  --orange:   #ec774b;
+  --yellow:   #edbf47;
+  --violet:   #c389ce;
+  --dark:     #495052;
+  --dark-2:   #404547;
+  --grey-lt:  #f9f9f9;
+  --grey:     #f1f1f1;
+  --grey-dk:  #e5e5e5;
+  --text:     #353b3d;
+  --text-sub: #868585;
   --white:    #ffffff;
-  --radius:   10px;
-  --shadow:   0 2px 12px rgba(0,0,0,.08);
-  --shadow-lg:0 4px 24px rgba(0,0,0,.12);
+  --radius:   5px;
+  --shadow:   0 4px 0 0 #f1f1f1;
+  --shadow-lg:0 4px 0 0 #e5e5e5;
 }
 
 /* ── Reset & base ────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 16px; scroll-behavior: smooth; }
 body {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Raleway', system-ui, sans-serif;
   background: var(--grey-lt);
   color: var(--text);
   line-height: 1.6;
@@ -328,3 +332,45 @@ textarea.form-control { resize: vertical; }
   .login-card { padding: 1.75rem 1.25rem; }
   .confirm-box { padding: 1.5rem 1.25rem; }
 }
+
+
+/* ══ Thème repris de site_travaux (framework Nicdark) ═══════════════════ */
+h1, h2, h3, h4, .page-title, .logo-title, .session-title, .btn, .badge,
+.inscrit-table th { font-family: 'Montserrat', sans-serif; }
+.page-title { font-weight: 700; color: var(--dark); }
+
+.app-header { background: none; border: 0; box-shadow: none; }
+.topbar { background: var(--dark); color: var(--white); }
+.topbar .header-inner { padding: .6rem 1.5rem; }
+.topbar-title { font-family: 'Montserrat', sans-serif; font-size: 1.05rem; }
+.topbar .nav-user, .topbar .btn-link { color: var(--white); }
+.gradient-band {
+  height: 12px;
+  background: linear-gradient(to right, #74cee4 0%, #66ce9c 16%, #edbf47 32%,
+              #ec774b 49%, #74cee4 65%, #66ce9c 83%, #edbf47 100%);
+}
+.brandbar {
+  background: var(--grey-lt);
+  box-shadow: 0 4px 0 0 var(--grey);
+  border-radius: 0 0 5px 5px;
+}
+.brandbar .header-inner { padding: .75rem 1.5rem; }
+.logo { color: inherit; }
+.logo:hover { text-decoration: none; }
+.logo-img { height: 56px; width: auto; }
+.logo-title { color: #065EC1; }
+
+/* Boutons : aplat + "marche" de 4px comme nicdark_btn + nicdark_shadow */
+.btn { border: 0; border-radius: var(--radius); }
+.btn:hover { transform: none; }
+.btn-primary   { background: var(--green);  box-shadow: 0 4px 0 0 #65ae83; }
+.btn-secondary { background: var(--blue);   box-shadow: 0 4px 0 0 #6dc0d5; }
+.btn-danger    { background: var(--red);    box-shadow: 0 4px 0 0 #9c3b3b; }
+.btn-ghost     { background: var(--white);  box-shadow: 0 4px 0 0 var(--grey-dk); color: var(--text-sub); }
+.btn:active    { transform: translateY(3px); box-shadow: 0 1px 0 0 rgba(0,0,0,.15); }
+
+.session-card, .login-card, .error-card, .table-wrap { border: 0; box-shadow: var(--shadow); }
+.session-card:hover { transform: none; box-shadow: var(--shadow-lg); }
+.session-card--open { border-left: 4px solid var(--green); }
+.inscrit-table thead { background: var(--dark); }
+.app-footer { background: var(--dark-2); color: var(--white); }
